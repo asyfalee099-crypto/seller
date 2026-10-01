@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shopkeeper app prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F7F6;--ink:#14202B;--muted:#5B6B76;--pri:#0F4C5C;--pri-t:#0F4C5C;--acc:#F26B21;--card:#fff;--line:#D6E2E4;--soft:#EAF3F3;--warn:#FFF3DA;--warn-t:#8A5A00;--bad:#D9480F;--ok:#1E8E5A;--shadow:0 30px 60px -25px rgba(15,76,92,.45)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D181C;--ink:#E8F0F2;--muted:#93A6AD;--pri:#1E7A90;--pri-t:#7CC4D4;--card:#15262C;--line:#24383F;--soft:#1B3038;--warn:#3A2D12;--warn-t:#F0C36A;--bad:#FF8A5C;--ok:#5BD39A;--shadow:0 30px 60px -25px #000}}
+:root[data-theme="dark"]{--bg:#0D181C;--ink:#E8F0F2;--muted:#93A6AD;--pri:#1E7A90;--pri-t:#7CC4D4;--card:#15262C;--line:#24383F;--soft:#1B3038;--warn:#3A2D12;--warn-t:#F0C36A;--bad:#FF8A5C;--ok:#5BD39A;--shadow:0 30px 60px -25px #000}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:center;min-height:100vh}
+h1{font:800 clamp(34px,5vw,56px)/1.05 "Bricolage Grotesque",system-ui,sans-serif;color:var(--pri-t);margin:0 0 16px;letter-spacing:-.02em}
+.lead{font-size:19px;color:var(--muted);max-width:30em;margin:0 0 28px}
+.try{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;max-width:30em}
+.try h2{font:600 18px "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 10px}
+.try ol{list-style:none;margin:0;padding:0;counter-reset:s}
+.try li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;counter-increment:s;color:var(--ink)}
+.try li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted)}
+.try li.done::before{content:"\2713";background:var(--ok);border-color:var(--ok);color:#fff}
+.try li.done{color:var(--muted);text-decoration:line-through}
+.note{font-size:14px;color:var(--muted);margin-top:16px}
+.phone{width:380px;height:720px;background:#14202B;border-radius:44px;padding:12px;box-shadow:var(--shadow);position:relative}
+.screen{height:100%;background:var(--bg);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.top{padding:18px 20px 10px;display:flex;justify-content:space-between;align-items:center}
+.top b{font:800 20px "Bricolage Grotesque",system-ui,sans-serif;color:var(--pri-t)}
+.top small{display:block;color:var(--muted);font-size:12px;margin-top:-2px}
+.scan{border:0;background:var(--acc);color:#fff;font-weight:700;border-radius:999px;padding:8px 14px;font-size:14px}
+.body{flex:1;overflow-y:auto;padding:4px 16px 16px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line);padding:6px 6px 10px}
+.tabs button{background:none;border:0;padding:8px 0;font-size:13px;color:var(--muted);border-radius:12px;font-weight:600}
+.tabs button[aria-current="page"]{color:var(--pri-t);background:var(--soft)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat span{font-size:12px;color:var(--muted)}
+.stat b{display:block;font:800 21px "Bricolage Grotesque",system-ui,sans-serif;color:var(--pri-t)}
+.stat.hot b{color:var(--acc)}
+h3{font-size:14px;margin:18px 0 8px;color:var(--muted);font-weight:700}
+.bars{display:flex;align-items:flex-end;gap:8px;height:90px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.bars i{flex:1;background:var(--pri);border-radius:5px 5px 0 0;min-height:4px;transition:height .4s}
+.bars i:last-child{background:var(--acc)}
+.alert{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--warn);color:var(--warn-t);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.alert b{display:block}
+.btn{border:0;background:var(--pri);color:#fff;border-radius:10px;padding:7px 12px;font-weight:700;font-size:13px}
+.btn.ghost{background:var(--soft);color:var(--pri-t)}
+.ok{background:var(--soft);color:var(--ok);border-radius:14px;padding:12px;font-weight:600;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.tile b{font-size:14px}.tile span{font-size:13px;color:var(--muted)}
+.tile em{font-style:normal;font-size:12px;font-weight:700;color:var(--ok)}
+.tile em.low{color:var(--bad)}
+.tile:disabled{opacity:.45;cursor:not-allowed}
+.tile .q{position:absolute;top:8px;right:8px;background:var(--acc);color:#fff;border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;font-size:13px;font-weight:800}
+.cart{background:var(--card);border-top:1px solid var(--line);padding:12px 16px}
+.cart .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.seg{display:inline-flex;background:var(--soft);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--pri-t)}
+select{font:inherit;font-size:14px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:5px 8px;max-width:150px}
+.charge{width:100%;border:0;background:var(--acc);color:#fff;border-radius:14px;padding:12px;font-weight:800;font-size:16px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
+.item .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.meter{height:6px;background:var(--soft);border-radius:4px;margin:8px 0 4px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--pri);border-radius:4px}
+.meter i.low{background:var(--bad)}
+.item small{color:var(--muted);font-size:12px}
+.debt{font:800 17px "Bricolage Grotesque",system-ui,sans-serif;color:var(--pri-t)}
+.toast{position:absolute;left:16px;right:16px;bottom:84px;background:#14202B;color:#fff;border-radius:14px;padding:11px 14px;font-size:14px;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.scanline{position:absolute;inset:0;background:rgba(20,32,43,.78);display:none;place-items:center;color:#fff;font-weight:700;z-index:3}
+.scanline.on{display:grid}
+.scanline::after{content:"";position:absolute;left:12%;right:12%;height:3px;background:var(--acc);box-shadow:0 0 14px var(--acc);animation:sc .7s ease-in-out infinite alternate}
+@keyframes sc{from{top:30%}to{top:65%}}
+@media (prefers-reduced-motion:reduce){.scanline::after{animation:none;top:50%}.bars i,.toast{transition:none}}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;justify-items:center;gap:32px;padding:24px 16px}.copy{width:100%;max-width:380px}.phone{order:-1}}
+@media (max-width:480px){.phone{width:100%;max-width:380px;height:680px;border-radius:36px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="copy">
+    <h1>Run the whole shop from one screen.</h1>
+    <p class="lead">A working prototype of our inventory, billing and ledger app. Sell something and watch stock, profit and ledgers update together.</p>
+    <div class="try">
+      <h2>Try it in three moves</h2>
+      <ol id="steps">
+        <li>Tap items or press Scan on the Sell tab, then charge a sale.</li>
+        <li>Open Home to see sales, profit and low-stock alerts update.</li>
+        <li>Restock a low item and check the supplier ledger.</li>
+      </ol>
+    </div>
+    <p class="note">Prototype with sample data. Nothing is saved.</p>
+  </section>
+  <section class="phone" aria-label="App prototype">
+    <div class="screen" id="screen">
+      <div class="top"><div><b>Noor General Store</b><small id="sub">Today</small></div><button class="scan" data-act="scan" aria-label="Scan a barcode">Scan</button></div>
+      <div class="body" id="body"></div>
+      <div id="cartbar"></div>
+      <nav class="tabs" id="tabs" aria-label="App sections"></nav>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="scanline" id="scanline">Scanning barcode...</div>
+    </div>
+  </section>
+</main>
+<script>
+var rs=function(n){return 'Rs '+Math.round(n).toLocaleString('en-US')};
+var P=[{id:0,n:'Rice 5kg',p:1450,c:1250,s:14},{id:1,n:'Cooking oil 1L',p:520,c:470,s:6},{id:2,n:'Sugar 1kg',p:190,c:172,s:9},{id:3,n:'Tea 250g',p:410,c:360,s:4},{id:4,n:'Milk 1L',p:290,c:265,s:11},{id:5,n:'Biscuits',p:60,c:48,s:3}];
+var MIN=5,RESTOCK=20;
+var S={tab:'home',cart:{},pay:'cash',cust:0,led:'c',sales:0,profit:0,cash:18400,
+  week:[5200,6100,4800,7300,6600,8100],
+  cu:[{n:'Ali Raza',o:1200},{n:'Sana Bibi',o:450},{n:'Hamid Khan',o:0}],
+  su:[{n:'Al-Noor Traders',o:0}],
+  done:[false,false,false],sold:false};
+var tabs=[['home','Home'],['sell','Sell'],['stock','Stock'],['ledger','Ledger']];
+var $=function(i){return document.getElementById(i)};
+var tt;
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},2300)}
+function tick(i){if(!S.done[i]){S.done[i]=true;$('steps').children[i].classList.add('done')}}
+function cartTotals(){var q=0,t=0,pr=0;P.forEach(function(x){var n=S.cart[x.id]||0;q+=n;t+=n*x.p;pr+=n*(x.p-x.c)});return{q:q,t:t,pr:pr}}
+function owed(){return S.cu.reduce(function(a,c){return a+c.o},0)}
+function low(){return P.filter(function(x){return x.s<=MIN})}
+function home(){
+  var l=low(),h='<div class="stats"><div class="stat"><span>Sales today</span><b>'+rs(S.sales)+'</b></div><div class="stat hot"><span>Profit today</span><b>'+rs(S.profit)+'</b></div><div class="stat"><span>Cash in hand</span><b>'+rs(S.cash)+'</b></div><div class="stat"><span>Owed to you</span><b>'+rs(owed())+'</b></div></div>';
+  var all=S.week.concat([S.sales+3900]),mx=Math.max.apply(null,all);
+  h+='<h3>Last 7 days</h3><div class="bars" aria-label="Sales for the last 7 days">'+all.map(function(v){return '<i style="height:'+Math.round(v/mx*100)+'%"></i>'}).join('')+'</div>';
+  h+='<h3>Reorder alerts</h3>';
+  h+=l.length?l.map(function(x){return '<div class="alert"><div><b>'+x.n+'</b>'+x.s+' left. Suggested order: '+RESTOCK+'</div><button class="btn" data-act="restock" data-id="'+x.id+'">Restock</button></div>'}).join(''):'<div class="ok">All items are well stocked.</div>';
+  return h}
+function sell(){return '<div class="grid">'+P.map(function(x){var n=S.cart[x.id]||0;return '<button class="tile" data-act="add" data-id="'+x.id+'"'+(x.s-n<=0?' disabled':'')+'>'+(n?'<span class="q">'+n+'</span>':'')+'<b>'+x.n+'</b><span>'+rs(x.p)+'</span><em class="'+(x.s<=MIN?'low':'')+'">'+(x.s-n)+' left</em></button>'}).join('')+'</div>'}
+function cartbar(){
+  if(S.tab!=='sell')return '';var c=cartTotals();
+  if(!c.q)return '<div class="cart"><small style="color:var(--muted)">Tap an item or press Scan to start a bill.</small></div>';
+  return '<div class="cart"><div class="row"><b>'+c.q+' items &middot; '+rs(c.t)+'</b><div class="seg"><button data-act="pay" data-v="cash" aria-pressed="'+(S.pay==='cash')+'">Cash</button><button data-act="pay" data-v="credit" aria-pressed="'+(S.pay==='credit')+'">Credit</button></div></div>'+(S.pay==='credit'?'<div class="row"><small>Customer</small><select id="cust" aria-label="Customer">'+S.cu.map(function(x,i){return '<option value="'+i+'"'+(i==S.cust?' selected':'')+'>'+x.n+'</option>'}).join('')+'</select></div>':'')+'<button class="charge" data-act="charge">Charge '+rs(c.t)+'</button></div>'}
+function stock(){return P.map(function(x){var pct=Math.min(100,x.s/(MIN*4)*100),lw=x.s<=MIN;return '<div class="item"><div class="row"><b>'+x.n+'</b><button class="btn'+(lw?'':' ghost')+'" data-act="restock" data-id="'+x.id+'">Restock +'+RESTOCK+'</button></div><div class="meter"><i class="'+(lw?'low':'')+'" style="width:'+pct+'%"></i></div><small>'+x.s+' in stock'+(lw?' &middot; reorder now':'')+'</small></div>'}).join('')}
+function ledger(){
+  var h='<div class="seg" style="margin-bottom:12px"><button data-act="led" data-v="c" aria-pressed="'+(S.led==='c')+'">Customers</button><button data-act="led" data-v="s" aria-pressed="'+(S.led==='s')+'">Suppliers</button></div>';
+  var L=S.led==='c'?S.cu:S.su;
+  return h+L.map(function(x,i){return '<div class="item"><div class="row"><div><b>'+x.n+'</b><br><small>'+(S.led==='c'?'Owes you':'You owe')+'</small></div><div class="debt">'+rs(x.o)+'</div></div>'+(x.o>0?'<div style="margin-top:8px"><button class="btn" data-act="settle" data-i="'+i+'">'+(S.led==='c'?'Got payment':'Pay supplier')+'</button></div>':'')+'</div>'}).join('')}
+function render(){
+  $('body').innerHTML={home:home,sell:sell,stock:stock,ledger:ledger}[S.tab]();
+  $('cartbar').innerHTML=cartbar();
+  $('tabs').innerHTML=tabs.map(function(t){return '<button data-act="tab" data-v="'+t[0]+'"'+(S.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+'</button>'}).join('');
+  var sc=$('cust');if(sc)sc.onchange=function(){S.cust=+sc.value};
+}
+function add(id){var x=P[id],n=S.cart[id]||0;if(x.s-n>0)S.cart[id]=n+1}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b)return;var a=b.dataset.act,id=+b.dataset.id;
+  if(a==='tab'){S.tab=b.dataset.v;if(S.tab==='home'&&S.sold)tick(1)}
+  else if(a==='add'){add(id)}
+  else if(a==='pay'){S.pay=b.dataset.v}
+  else if(a==='led'){S.led=b.dataset.v}
+  else if(a==='scan'){
+    var av=P.filter(function(x){return x.s-(S.cart[x.id]||0)>0});if(!av.length)return;
+    S.tab='sell';$('scanline').classList.add('on');
+    setTimeout(function(){$('scanline').classList.remove('on');var x=av[Math.floor(Math.random()*av.length)];add(x.id);toast('Scanned: '+x.n);render()},800);render();return}
+  else if(a==='charge'){
+    var c=cartTotals();if(!c.q)return;
+    if(S.pay==='credit'){S.cu[S.cust].o+=c.t}else{S.cash+=c.t}
+    var lowNow=[];
+    P.forEach(function(x){var n=S.cart[x.id]||0;if(n){var was=x.s>MIN;x.s-=n;if(was&&x.s<=MIN)lowNow.push(x.n)}});
+    S.sales+=c.t;S.profit+=c.pr;S.cart={};S.sold=true;tick(0);
+    toast(lowNow.length?'Sale saved. Low stock: '+lowNow.join(', '):'Sale saved. Stock updated.')}
+  else if(a==='restock'){
+    var x=P[id];x.s+=RESTOCK;S.su[0].o+=x.c*RESTOCK;tick(2);toast(x.n+' +'+RESTOCK+' added. Supplier ledger updated.')}
+  else if(a==='settle'){
+    var i=+b.dataset.i,L=S.led==='c'?S.cu:S.su,amt=L[i].o;
+    if(S.led==='c'){S.cash+=amt;toast('Received '+rs(amt)+' from '+L[i].n)}
+    else{if(S.cash<amt){toast('Not enough cash in hand to pay '+rs(amt));return}S.cash-=amt;toast('Paid '+rs(amt)+' to '+L[i].n)}
+    L[i].o=0}
+  render();
+});
+render();
+</script>
+</body>
+</html>
